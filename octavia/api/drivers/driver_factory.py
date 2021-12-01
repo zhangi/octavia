@@ -12,6 +12,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+from functools import lru_cache
 from oslo_config import cfg
 from oslo_log import log as logging
 from stevedore import driver as stevedore_driver
@@ -23,6 +24,7 @@ CONF = cfg.CONF
 LOG = logging.getLogger(__name__)
 
 
+@lru_cache(maxsize=None)
 def get_driver(provider):
     # If this came in None it must be a load balancer that existed before
     # provider support was added. These must be of type 'amphora' and not
