@@ -83,8 +83,6 @@ def _base_to_provider_dict(current_dict, include_project_id=False):
     new_dict = copy.deepcopy(current_dict)
     if 'provisioning_status' in new_dict:
         del new_dict['provisioning_status']
-    if 'operating_status' in new_dict:
-        del new_dict['operating_status']
     if 'provider' in new_dict:
         del new_dict['provider']
     if 'created_at' in new_dict:
