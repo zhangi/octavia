@@ -695,11 +695,13 @@ class LoadBalancersController(base.BaseController):
         result = self._convert_db_to_type(db_lb, lb_types.LoadBalancerResponse)
         return lb_types.LoadBalancerRootResponse(loadbalancer=result)
 
-    @wsme_pecan.wsexpose(None, wtypes.text, wtypes.text, status_code=204)
-    def delete(self, id, cascade=False):
+    @wsme_pecan.wsexpose(None, wtypes.text, wtypes.text, wtypes.text,
+                         status_code=204)
+    def delete(self, id, cascade=False, keep_vip_port=False):
         """Deletes a load balancer."""
         context = pecan_request.context.get('octavia_context')
         cascade = strutils.bool_from_string(cascade)
+        keep_vip_port = strutils.bool_from_string(keep_vip_port)
         db_lb = self._get_db_lb(context.session, id, show_deleted=False)
 
         self._auth_validate_action(context, db_lb.project_id,
@@ -723,7 +725,8 @@ class LoadBalancersController(base.BaseController):
                 driver_utils.db_loadbalancer_to_provider_loadbalancer(
                     db_lb, for_delete=True))
             driver_utils.call_provider(driver.name, driver.loadbalancer_delete,
-                                       provider_loadbalancer, cascade)
+                                       provider_loadbalancer, cascade,
+                                       keep_vip_port)
 
     @pecan_expose()
     def _lookup(self, id, *remainder):
